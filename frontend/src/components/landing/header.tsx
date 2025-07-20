@@ -8,40 +8,40 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="bg-white shadow-sm border-b">
+    <header className="bg-card shadow-sm border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-              <HardHat className="w-5 h-5 text-white" />
+            <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+              <HardHat className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold text-gray-900">Site Tasker</span>
+            <span className="text-xl font-bold text-foreground">Site Tasker</span>
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             <a
               href="#home"
-              className="text-gray-700 hover:text-blue-600 transition-colors"
+              className="text-muted-foreground hover:text-primary transition-colors"
             >
               Home
             </a>
             <a
               href="#features"
-              className="text-gray-700 hover:text-blue-600 transition-colors"
+              className="text-muted-foreground hover:text-primary transition-colors"
             >
               Features
             </a>
             <a
               href="#about"
-              className="text-gray-700 hover:text-blue-600 transition-colors"
+              className="text-muted-foreground hover:text-primary transition-colors"
             >
               About
             </a>
             <a
               href="#contact"
-              className="text-gray-700 hover:text-blue-600 transition-colors"
+              className="text-muted-foreground hover:text-primary transition-colors"
             >
               Contact
             </a>
@@ -49,7 +49,7 @@ export default function Header() {
 
           {/* CTA Button */}
           <div className="hidden md:flex">
-            <Button className="bg-blue-600 hover:bg-blue-700">
+            <Button>
               Get Started
             </Button>
           </div>
@@ -76,29 +76,29 @@ export default function Header() {
             <nav className="flex flex-col space-y-4">
               <a
                 href="#home"
-                className="text-gray-700 hover:text-blue-600 transition-colors"
+                className="text-muted-foreground hover:text-primary transition-colors"
               >
                 Home
               </a>
               <a
                 href="#features"
-                className="text-gray-700 hover:text-blue-600 transition-colors"
+                className="text-muted-foreground hover:text-primary transition-colors"
               >
                 Features
               </a>
               <a
                 href="#about"
-                className="text-gray-700 hover:text-blue-600 transition-colors"
+                className="text-muted-foreground hover:text-primary transition-colors"
               >
                 About
               </a>
               <a
                 href="#contact"
-                className="text-gray-700 hover:text-blue-600 transition-colors"
+                className="text-muted-foreground hover:text-primary transition-colors"
               >
                 Contact
               </a>
-              <Button className="bg-blue-600 hover:bg-blue-700 w-full">
+              <Button className="w-full">
                 Get Started
               </Button>
             </nav>

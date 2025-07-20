@@ -23,11 +23,11 @@ export default function LoginForm() {
   return (
     <Card className="w-full shadow-xl border-0">
       <CardHeader className="text-center pb-6">
-        <div className="mx-auto mb-4 w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
-          <HardHat className="w-8 h-8 text-white" />
+        <div className="mx-auto mb-4 w-16 h-16 bg-primary rounded-full flex items-center justify-center">
+          <HardHat className="w-8 h-8 text-primary-foreground" />
         </div>
-        <h1 className="text-2xl font-bold text-gray-900">Site Tasker</h1>
-        <p className="text-gray-600 text-sm">Construction Management System</p>
+        <h1 className="text-2xl font-bold text-foreground">Site Tasker</h1>
+        <p className="text-muted-foreground text-sm">Construction Management System</p>
       </CardHeader>
 
       <CardContent className="space-y-6">
@@ -35,12 +35,12 @@ export default function LoginForm() {
           <div className="space-y-2">
             <Label
               htmlFor="email"
-              className="text-sm font-medium text-gray-700"
+              className="text-sm font-medium text-foreground"
             >
               Email Address
             </Label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
                 id="email"
                 type="email"
@@ -56,12 +56,12 @@ export default function LoginForm() {
           <div className="space-y-2">
             <Label
               htmlFor="password"
-              className="text-sm font-medium text-gray-700"
+              className="text-sm font-medium text-foreground"
             >
               Password
             </Label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
                 id="password"
                 type="password"
@@ -76,7 +76,7 @@ export default function LoginForm() {
 
           <Button
             type="submit"
-            className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-medium"
+            className="w-full h-12 font-medium"
           >
             <LogIn className="w-4 h-4 mr-2" />
             Sign In

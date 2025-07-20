@@ -15,12 +15,12 @@ const demoAccounts: DemoAccount[] = [
   {
     email: "mike@client.com",
     role: "Client",
-    roleColor: "text-blue-600",
+    roleColor: "text-primary",
   },
   {
     email: "admin@builder.com",
     role: "Admin",
-    roleColor: "text-red-600",
+    roleColor: "text-destructive",
   },
   {
     email: "tom@sitemanager.com",
@@ -32,7 +32,7 @@ const demoAccounts: DemoAccount[] = [
 export default function DemoAccounts() {
   return (
     <div className="space-y-3">
-      <p className="text-sm font-medium text-gray-700">
+      <p className="text-sm font-medium text-foreground">
         Demo accounts (password: any):
       </p>
 
@@ -40,10 +40,10 @@ export default function DemoAccounts() {
         {demoAccounts.map((account, index) => (
           <Card
             key={index}
-            className="p-3 bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors cursor-pointer"
+            className="p-3 bg-secondary border border-border hover:bg-accent transition-colors cursor-pointer"
           >
             <div className="flex flex-col space-y-1">
-              <span className="text-sm font-medium text-gray-900">
+              <span className="text-sm font-medium text-foreground">
                 {account.email}
               </span>
               <span className={`text-xs font-medium ${account.roleColor}`}>
