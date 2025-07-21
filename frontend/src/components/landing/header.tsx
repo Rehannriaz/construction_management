@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { HardHat, Menu, X } from "lucide-react";
 
 export default function Header() {
@@ -49,9 +50,11 @@ export default function Header() {
 
           {/* CTA Button */}
           <div className="hidden md:flex">
-            <Button>
-              Get Started
-            </Button>
+            <Link href="/login">
+              <Button>
+                Get Started
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -98,9 +101,11 @@ export default function Header() {
               >
                 Contact
               </a>
-              <Button className="w-full">
-                Get Started
-              </Button>
+              <Link href="/login">
+                <Button className="w-full">
+                  Get Started
+                </Button>
+              </Link>
             </nav>
           </div>
         )}

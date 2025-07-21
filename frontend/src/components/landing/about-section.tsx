@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { CheckCircle, Play } from "lucide-react";
 
 const benefits = [
@@ -34,9 +35,11 @@ export default function AboutSection() {
               ))}
             </div>
 
-            <Button size="lg" className="bg-primary hover:bg-primary/90">
-              Learn More About Us
-            </Button>
+            <Link href="/login">
+              <Button size="lg" className="bg-primary hover:bg-primary/90">
+                Get Started Now
+              </Button>
+            </Link>
           </div>
 
           <div className="relative">

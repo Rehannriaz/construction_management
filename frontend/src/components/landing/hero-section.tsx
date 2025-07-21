@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { ArrowRight, Play } from "lucide-react";
 
 export default function HeroSection() {
@@ -19,13 +20,15 @@ export default function HeroSection() {
             ad minim veniam, quis nostrud exercitation ullamco laboris.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button
-              size="lg"
-              className="bg-primary hover:bg-primary/90 text-lg px-8 py-3"
-            >
-              Start Free Trial
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
+            <Link href="/login">
+              <Button
+                size="lg"
+                className="bg-primary hover:bg-primary/90 text-lg px-8 py-3"
+              >
+                Start Free Trial
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </Link>
             <Button
               variant="outline"
               size="lg"
