@@ -5,7 +5,8 @@ import type React from "react";
 import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Building2, Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-react";
+import { Building2, Eye, EyeOff, Mail, Lock, ArrowRight, AlertCircle } from "lucide-react";
+import { useAuth } from "@/hooks/api/use-auth";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,14 +22,34 @@ import { Separator } from "@/components/ui/separator";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: ""
+  });
+  const [errors, setErrors] = useState<string>("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const { signIn, isSigningIn } = useAuth();
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setIsLoading(false);
+    setErrors("");
+
+    if (!formData.email || !formData.password) {
+      setErrors("Please fill in all fields");
+      return;
+    }
+
+    signIn(formData);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    // Clear errors when user starts typing
+    if (errors) setErrors("");
   };
 
   return (
@@ -136,15 +157,29 @@ export default function LoginPage() {
                 onSubmit={handleSubmit}
                 className="space-y-4"
               >
+                {errors && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-3 bg-destructive/10 border border-destructive/20 rounded-md flex items-center space-x-2"
+                  >
+                    <AlertCircle className="h-4 w-4 text-destructive" />
+                    <span className="text-sm text-destructive">{errors}</span>
+                  </motion.div>
+                )}
+
                 <div className="space-y-2">
                   <Label htmlFor="email">Email Address</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="email"
+                      name="email"
                       type="email"
                       placeholder="john@company.com"
                       className="pl-10 h-12"
+                      value={formData.email}
+                      onChange={handleInputChange}
                       required
                     />
                   </div>
@@ -156,9 +191,12 @@ export default function LoginPage() {
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="password"
+                      name="password"
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter your password"
                       className="pl-10 pr-10 h-12"
+                      value={formData.password}
+                      onChange={handleInputChange}
                       required
                     />
                     <button
@@ -187,9 +225,9 @@ export default function LoginPage() {
                 <Button
                   type="submit"
                   className="w-full h-12 text-base font-medium"
-                  disabled={isLoading}
+                  disabled={isSigningIn}
                 >
-                  {isLoading ? (
+                  {isSigningIn ? (
                     <motion.div
                       animate={{ rotate: 360 }}
                       transition={{

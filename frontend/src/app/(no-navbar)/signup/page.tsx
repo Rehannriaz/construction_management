@@ -15,7 +15,9 @@ import {
   Building,
   ArrowRight,
   Check,
+  AlertCircle,
 } from "lucide-react";
+import { useAuth } from "@/hooks/api/use-auth";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,17 +35,95 @@ import { Checkbox } from "@/components/ui/checkbox";
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    companyName: "",
+    companyEmail: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [errors, setErrors] = useState<string>("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const { signUp, isSigningUp, getSignUpValidationErrors, getSignUpErrorMessage } = useAuth();
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!agreedToTerms) return;
+    setErrors("");
+    setFieldErrors({});
 
-    setIsLoading(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setIsLoading(false);
+    if (!agreedToTerms) {
+      setErrors("Please agree to the Terms of Service and Privacy Policy");
+      return;
+    }
+
+    // Validate form
+    if (
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.email ||
+      !formData.companyName ||
+      !formData.companyEmail ||
+      !formData.password ||
+      !formData.confirmPassword
+    ) {
+      setErrors("Please fill in all fields");
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setErrors("Passwords do not match");
+      return;
+    }
+
+    if (formData.password.length < 8) {
+      setErrors("Password must be at least 8 characters long");
+      return;
+    }
+
+    const signUpData = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      companyName: formData.companyName,
+      companyEmail: formData.companyEmail,
+      password: formData.password,
+    };
+
+    signUp(signUpData);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    // Clear errors when user starts typing
+    if (errors) setErrors("");
+    if (fieldErrors[name]) {
+      setFieldErrors((prev) => ({
+        ...prev,
+        [name]: [],
+      }));
+    }
+  };
+
+  // Helper function to get field errors from backend validation
+  const getFieldErrors = (fieldName: string) => {
+    // First check local field errors
+    if (fieldErrors[fieldName] && fieldErrors[fieldName].length > 0) {
+      return fieldErrors[fieldName];
+    }
+
+    // Then check validation errors from auth hook
+    const validationErrors = getSignUpValidationErrors();
+    return validationErrors
+      .filter((error) => error.field === fieldName)
+      .map((error) => error.message);
   };
 
   const features = [
@@ -167,6 +247,17 @@ export default function SignupPage() {
                 onSubmit={handleSubmit}
                 className="space-y-4"
               >
+                {(errors || getSignUpErrorMessage()) && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-3 bg-destructive/10 border border-destructive/20 rounded-md flex items-center space-x-2"
+                  >
+                    <AlertCircle className="h-4 w-4 text-destructive" />
+                    <span className="text-sm text-destructive">{errors || getSignUpErrorMessage()}</span>
+                  </motion.div>
+                )}
+
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="firstName">First Name</Label>
@@ -174,9 +265,12 @@ export default function SignupPage() {
                       <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="firstName"
+                        name="firstName"
                         type="text"
                         placeholder="John"
                         className="pl-10 h-12"
+                        value={formData.firstName}
+                        onChange={handleInputChange}
                         required
                       />
                     </div>
@@ -185,9 +279,12 @@ export default function SignupPage() {
                     <Label htmlFor="lastName">Last Name</Label>
                     <Input
                       id="lastName"
+                      name="lastName"
                       type="text"
                       placeholder="Doe"
                       className="h-12"
+                      value={formData.lastName}
+                      onChange={handleInputChange}
                       required
                     />
                   </div>
@@ -199,26 +296,87 @@ export default function SignupPage() {
                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="email"
+                      name="email"
                       type="email"
                       placeholder="john@company.com"
+                      className={`pl-10 h-12 ${
+                        getFieldErrors("email").length > 0
+                          ? "border-destructive"
+                          : ""
+                      }`}
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  {getFieldErrors("email").length > 0 && (
+                    <div className="space-y-1">
+                      {getFieldErrors("email").map((error, index) => (
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="flex items-center space-x-2 text-sm text-destructive"
+                        >
+                          <AlertCircle className="h-3 w-3" />
+                          <span>{error}</span>
+                        </motion.div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="companyName">Company Name</Label>
+                  <div className="relative">
+                    <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="companyName"
+                      name="companyName"
+                      type="text"
+                      placeholder="Your Construction Company"
                       className="pl-10 h-12"
+                      value={formData.companyName}
+                      onChange={handleInputChange}
                       required
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="company">Company Name</Label>
+                  <Label htmlFor="companyEmail">Company Email</Label>
                   <div className="relative">
-                    <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
-                      id="company"
-                      type="text"
-                      placeholder="Your Construction Company"
-                      className="pl-10 h-12"
+                      id="companyEmail"
+                      name="companyEmail"
+                      type="email"
+                      placeholder="contact@company.com"
+                      className={`pl-10 h-12 ${
+                        getFieldErrors("companyEmail").length > 0
+                          ? "border-destructive"
+                          : ""
+                      }`}
+                      value={formData.companyEmail}
+                      onChange={handleInputChange}
                       required
                     />
                   </div>
+                  {getFieldErrors("companyEmail").length > 0 && (
+                    <div className="space-y-1">
+                      {getFieldErrors("companyEmail").map((error, index) => (
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="flex items-center space-x-2 text-sm text-destructive"
+                        >
+                          <AlertCircle className="h-3 w-3" />
+                          <span>{error}</span>
+                        </motion.div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -227,9 +385,16 @@ export default function SignupPage() {
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="password"
+                      name="password"
                       type={showPassword ? "text" : "password"}
                       placeholder="Create a strong password"
-                      className="pl-10 pr-10 h-12"
+                      className={`pl-10 pr-10 h-12 ${
+                        getFieldErrors("password").length > 0
+                          ? "border-destructive"
+                          : ""
+                      }`}
+                      value={formData.password}
+                      onChange={handleInputChange}
                       required
                     />
                     <button
@@ -244,6 +409,21 @@ export default function SignupPage() {
                       )}
                     </button>
                   </div>
+                  {getFieldErrors("password").length > 0 && (
+                    <div className="space-y-1">
+                      {getFieldErrors("password").map((error, index) => (
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="flex items-center space-x-2 text-sm text-destructive"
+                        >
+                          <AlertCircle className="h-3 w-3" />
+                          <span>{error}</span>
+                        </motion.div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -252,9 +432,12 @@ export default function SignupPage() {
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="confirmPassword"
+                      name="confirmPassword"
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="Confirm your password"
                       className="pl-10 pr-10 h-12"
+                      value={formData.confirmPassword}
+                      onChange={handleInputChange}
                       required
                     />
                     <button
@@ -305,9 +488,9 @@ export default function SignupPage() {
                 <Button
                   type="submit"
                   className="w-full h-12 text-base font-medium"
-                  disabled={isLoading || !agreedToTerms}
+                  disabled={isSigningUp || !agreedToTerms}
                 >
-                  {isLoading ? (
+                  {isSigningUp ? (
                     <motion.div
                       animate={{ rotate: 360 }}
                       transition={{
