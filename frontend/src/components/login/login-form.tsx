@@ -22,17 +22,17 @@ export default function LoginForm() {
 
   return (
     <Card className="w-full shadow-xl border-0">
-      <CardHeader className="text-center pb-6">
-        <div className="mx-auto mb-4 w-16 h-16 bg-primary rounded-full flex items-center justify-center">
-          <HardHat className="w-8 h-8 text-primary-foreground" />
+      <CardHeader className="text-center pb-4">
+        <div className="mx-auto mb-3 w-12 h-12 bg-primary rounded-full flex items-center justify-center">
+          <HardHat className="w-6 h-6 text-primary-foreground" />
         </div>
-        <h1 className="text-2xl font-bold text-foreground">Site Tasker</h1>
-        <p className="text-muted-foreground text-sm">Construction Management System</p>
+        <h1 className="text-xl font-bold text-foreground">Site Tasker</h1>
+        <p className="text-muted-foreground text-xs">Construction Management System</p>
       </CardHeader>
 
-      <CardContent className="space-y-6">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
+      <CardContent className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="space-y-1">
             <Label
               htmlFor="email"
               className="text-sm font-medium text-foreground"
@@ -47,13 +47,13 @@ export default function LoginForm() {
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="pl-10 h-12"
+                className="pl-10 h-10"
                 required
               />
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1">
             <Label
               htmlFor="password"
               className="text-sm font-medium text-foreground"
@@ -68,7 +68,7 @@ export default function LoginForm() {
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="pl-10 h-12"
+                className="pl-10 h-10"
                 required
               />
             </div>
@@ -76,7 +76,7 @@ export default function LoginForm() {
 
           <Button
             type="submit"
-            className="w-full h-12 font-medium"
+            className="w-full h-10 font-medium"
           >
             <LogIn className="w-4 h-4 mr-2" />
             Sign In
