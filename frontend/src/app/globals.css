@@ -21,7 +21,7 @@
   --color-orange-600: var(--orange-600);
   --color-purple-600: var(--purple-600);
   --color-black: var(--black);
-  
+
   /* Theme Colors */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -64,7 +64,7 @@
 
 :root {
   --radius: 0.625rem;
-  
+
   /* Custom Color Palette */
   --white: #ffffff;
   --gray-50: #f9fafb;
@@ -82,7 +82,7 @@
   --black: #000000;
   --gray-200: #e5e7eb;
   --blue-200: #bfdbfe;
-  
+
   /* Theme Variables */
   --background: var(--white);
   --foreground: var(--gray-900);
