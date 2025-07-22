@@ -131,7 +131,7 @@ export default function Footer() {
 
         <div className="border-t border-border mt-8 pt-8 text-center">
           <p className="text-muted-foreground">
-            © 2024 Site Tasker. All rights reserved. Lorem ipsum dolor sit amet
+            © 2025 Site Tasker. All rights reserved. Lorem ipsum dolor sit amet
             consectetur.
           </p>
         </div>

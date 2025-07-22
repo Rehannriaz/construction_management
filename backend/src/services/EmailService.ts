@@ -1,4 +1,4 @@
-import sgMail from '@sendgrid/mail';
+import sgMail from "@sendgrid/mail";
 
 export interface EmailOptions {
   to: string;
@@ -16,13 +16,13 @@ export class EmailService {
 
   private initialize(): void {
     const apiKey = process.env.SENDGRID_API_KEY;
-    
+
     if (apiKey) {
       sgMail.setApiKey(apiKey);
       this.isConfigured = true;
-      console.log('✅ SendGrid configured successfully');
+      console.log("✅ SendGrid configured successfully");
     } else {
-      console.log('⚠️  SendGrid API key not found - emails will not be sent');
+      console.log("⚠️  SendGrid API key not found - emails will not be sent");
     }
   }
 
@@ -30,7 +30,7 @@ export class EmailService {
    * Check if email service is properly configured
    */
   public isReady(): boolean {
-    return this.isConfigured && process.env.SEND_EMAILS === 'true';
+    return this.isConfigured && process.env.SEND_EMAILS === "true";
   }
 
   /**
@@ -38,7 +38,9 @@ export class EmailService {
    */
   public async sendEmail(options: EmailOptions): Promise<void> {
     if (!this.isReady()) {
-      console.log(`[EMAIL] Service not ready - would send email to ${options.to}: ${options.subject}`);
+      console.log(
+        `[EMAIL] Service not ready - would send email to ${options.to}: ${options.subject}`
+      );
       return;
     }
 
@@ -46,47 +48,57 @@ export class EmailService {
       const msg = {
         to: options.to,
         from: {
-          email: process.env.SENDGRID_FROM_EMAIL || 'noreply@sitetasker.com',
-          name: process.env.SENDGRID_FROM_NAME || 'Site Tasker'
+          email: process.env.SENDGRID_FROM_EMAIL || "noreply@sitetasker.com",
+          name: process.env.SENDGRID_FROM_NAME || "Site Tasker",
         },
         subject: options.subject,
         html: options.html,
-        text: options.text || this.stripHtml(options.html)
+        text: options.text || this.stripHtml(options.html),
       };
 
       const response = await sgMail.send(msg);
-      console.log(`✅ Email sent successfully to ${options.to} - Status: ${response[0].statusCode}`);
+      console.log(
+        `✅ Email sent successfully to ${options.to} - Status: ${response[0].statusCode}`
+      );
     } catch (error) {
-      console.error('❌ Failed to send email:', error);
-      throw new Error('Failed to send email');
+      console.error("❌ Failed to send email:", error);
+      throw new Error("Failed to send email");
     }
   }
 
   /**
    * Send OTP verification email
    */
-  public async sendOTPEmail(email: string, otpCode: string, type: 'email_verification' | 'password_reset' | 'two_factor'): Promise<void> {
+  public async sendOTPEmail(
+    email: string,
+    otpCode: string,
+    type: "email_verification" | "password_reset" | "two_factor"
+  ): Promise<void> {
     const subject = this.getEmailSubject(type);
     const html = this.createOTPEmailTemplate(otpCode, type);
 
     await this.sendEmail({
       to: email,
       subject,
-      html
+      html,
     });
   }
 
   /**
    * Send welcome email after successful verification
    */
-  public async sendWelcomeEmail(email: string, firstName: string, companyName: string): Promise<void> {
-    const subject = 'Welcome to Site Tasker!';
+  public async sendWelcomeEmail(
+    email: string,
+    firstName: string,
+    companyName: string
+  ): Promise<void> {
+    const subject = "Welcome to Site Tasker!";
     const html = this.createWelcomeEmailTemplate(firstName, companyName);
 
     await this.sendEmail({
       to: email,
       subject,
-      html
+      html,
     });
   }
 
@@ -95,14 +107,14 @@ export class EmailService {
    */
   private getEmailSubject(type: string): string {
     switch (type) {
-      case 'email_verification':
-        return 'Verify Your Email - Site Tasker';
-      case 'password_reset':
-        return 'Reset Your Password - Site Tasker';
-      case 'two_factor':
-        return 'Two-Factor Authentication - Site Tasker';
+      case "email_verification":
+        return "Verify Your Email - Site Tasker";
+      case "password_reset":
+        return "Reset Your Password - Site Tasker";
+      case "two_factor":
+        return "Two-Factor Authentication - Site Tasker";
       default:
-        return 'Verification Code - Site Tasker';
+        return "Verification Code - Site Tasker";
     }
   }
 
@@ -111,7 +123,7 @@ export class EmailService {
    */
   private createOTPEmailTemplate(otpCode: string, type: string): string {
     const { title, message, actionText } = this.getEmailContent(type);
-    
+
     return `
     <!DOCTYPE html>
     <html lang="en">
@@ -359,7 +371,7 @@ export class EmailService {
             <a href="https://sitetasker.com/privacy" class="footer-link">Privacy Policy</a>
           </div>
           <div class="company-info">
-            © 2024 Site Tasker. Construction Management System.<br>
+            © 2025 Site Tasker. Construction Management System.<br>
             This email was sent to verify your account. Please do not reply to this email.
           </div>
         </div>
@@ -371,7 +383,10 @@ export class EmailService {
   /**
    * Create welcome email template
    */
-  private createWelcomeEmailTemplate(firstName: string, companyName: string): string {
+  private createWelcomeEmailTemplate(
+    firstName: string,
+    companyName: string
+  ): string {
     return `
     <!DOCTYPE html>
     <html lang="en">
@@ -455,7 +470,7 @@ export class EmailService {
         
         <div class="email-footer">
           <p class="footer-text">
-            © 2024 Site Tasker. Construction Management System.<br>
+            © 2025 Site Tasker. Construction Management System.<br>
             Need help getting started? Contact us at support@sitetasker.com
           </p>
         </div>
@@ -469,29 +484,33 @@ export class EmailService {
    */
   private getEmailContent(type: string) {
     switch (type) {
-      case 'email_verification':
+      case "email_verification":
         return {
-          title: 'Email Verification Required',
-          actionText: 'Verify Your Email Address',
-          message: 'Please use the verification code below to complete your Site Tasker account setup. This code will expire in 10 minutes for your security.'
+          title: "Email Verification Required",
+          actionText: "Verify Your Email Address",
+          message:
+            "Please use the verification code below to complete your Site Tasker account setup. This code will expire in 10 minutes for your security.",
         };
-      case 'password_reset':
+      case "password_reset":
         return {
-          title: 'Password Reset Request',
-          actionText: 'Reset Your Password',
-          message: 'You requested to reset your password. Please use the verification code below to continue with the password reset process.'
+          title: "Password Reset Request",
+          actionText: "Reset Your Password",
+          message:
+            "You requested to reset your password. Please use the verification code below to continue with the password reset process.",
         };
-      case 'two_factor':
+      case "two_factor":
         return {
-          title: 'Two-Factor Authentication',
-          actionText: 'Complete Your Login',
-          message: 'Please use the verification code below to complete your two-factor authentication and secure access to your account.'
+          title: "Two-Factor Authentication",
+          actionText: "Complete Your Login",
+          message:
+            "Please use the verification code below to complete your two-factor authentication and secure access to your account.",
         };
       default:
         return {
-          title: 'Verification Required',
-          actionText: 'Verify Your Action',
-          message: 'Please use the verification code below to complete your request.'
+          title: "Verification Required",
+          actionText: "Verify Your Action",
+          message:
+            "Please use the verification code below to complete your request.",
         };
     }
   }
@@ -501,8 +520,8 @@ export class EmailService {
    */
   private stripHtml(html: string): string {
     return html
-      .replace(/<[^>]*>/g, '')
-      .replace(/\s+/g, ' ')
+      .replace(/<[^>]*>/g, "")
+      .replace(/\s+/g, " ")
       .trim();
   }
 }

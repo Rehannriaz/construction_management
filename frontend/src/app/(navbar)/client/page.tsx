@@ -51,67 +51,76 @@ export default function ClientDashboard() {
       contractor: "BuildRight Construction",
       status: "active",
       progress: 65,
-      startDate: "2024-01-15",
-      estimatedCompletion: "2024-08-15",
+      startDate: "2025-01-15",
+      estimatedCompletion: "2025-08-15",
       lastUpdate: "2 hours ago",
       milestone: "Foundation Complete",
     },
     {
       id: 2,
       name: "Office Building Renovation",
-      address: "456 Business Ave, Downtown", 
+      address: "456 Business Ave, Downtown",
       contractor: "BuildRight Construction",
       status: "active",
       progress: 42,
-      startDate: "2024-02-01",
-      estimatedCompletion: "2024-09-30",
+      startDate: "2025-02-01",
+      estimatedCompletion: "2025-09-30",
       lastUpdate: "1 day ago",
       milestone: "Electrical Phase",
     },
   ];
 
   const recentUpdates = [
-    { 
-      id: 1, 
+    {
+      id: 1,
       type: "progress",
       title: "Foundation work completed",
       project: "Luxury Home Construction",
       time: "2 hours ago",
-      description: "Concrete foundation has been poured and is curing properly."
+      description:
+        "Concrete foundation has been poured and is curing properly.",
     },
-    { 
-      id: 2, 
+    {
+      id: 2,
       type: "photo",
       title: "Progress photos uploaded",
-      project: "Office Building Renovation", 
+      project: "Office Building Renovation",
       time: "4 hours ago",
-      description: "New photos showing electrical installation progress."
+      description: "New photos showing electrical installation progress.",
     },
-    { 
-      id: 3, 
+    {
+      id: 3,
       type: "report",
       title: "Weekly progress report",
       project: "Luxury Home Construction",
-      time: "1 day ago", 
-      description: "Weekly summary of completed work and upcoming tasks."
+      time: "1 day ago",
+      description: "Weekly summary of completed work and upcoming tasks.",
     },
   ];
 
   const getUpdateIcon = (type: string) => {
     switch (type) {
-      case "progress": return <TrendingUp className="h-4 w-4" />;
-      case "photo": return <Camera className="h-4 w-4" />;
-      case "report": return <FileText className="h-4 w-4" />;
-      default: return <Activity className="h-4 w-4" />;
+      case "progress":
+        return <TrendingUp className="h-4 w-4" />;
+      case "photo":
+        return <Camera className="h-4 w-4" />;
+      case "report":
+        return <FileText className="h-4 w-4" />;
+      default:
+        return <Activity className="h-4 w-4" />;
     }
   };
 
   const getUpdateColor = (type: string) => {
     switch (type) {
-      case "progress": return "bg-green-50 text-green-700 border-green-200";
-      case "photo": return "bg-blue-50 text-blue-700 border-blue-200";  
-      case "report": return "bg-purple-50 text-purple-700 border-purple-200";
-      default: return "bg-gray-50 text-gray-700 border-gray-200";
+      case "progress":
+        return "bg-green-50 text-green-700 border-green-200";
+      case "photo":
+        return "bg-blue-50 text-blue-700 border-blue-200";
+      case "report":
+        return "bg-purple-50 text-purple-700 border-purple-200";
+      default:
+        return "bg-gray-50 text-gray-700 border-gray-200";
     }
   };
 
@@ -193,7 +202,7 @@ export default function ClientDashboard() {
             >
               {currentTime.toLocaleDateString("en-US", {
                 weekday: "long",
-                year: "numeric", 
+                year: "numeric",
                 month: "long",
                 day: "numeric",
               })}
@@ -317,11 +326,21 @@ export default function ClientDashboard() {
                           <div className="space-y-1">
                             <div className="flex items-center gap-1">
                               <Calendar className="h-3 w-3" />
-                              <span>Started: {new Date(project.startDate).toLocaleDateString()}</span>
+                              <span>
+                                Started:{" "}
+                                {new Date(
+                                  project.startDate
+                                ).toLocaleDateString()}
+                              </span>
                             </div>
                             <div className="flex items-center gap-1">
                               <Clock className="h-3 w-3" />
-                              <span>Est. Complete: {new Date(project.estimatedCompletion).toLocaleDateString()}</span>
+                              <span>
+                                Est. Complete:{" "}
+                                {new Date(
+                                  project.estimatedCompletion
+                                ).toLocaleDateString()}
+                              </span>
                             </div>
                           </div>
                           <div className="space-y-1">
@@ -337,15 +356,27 @@ export default function ClientDashboard() {
                         </div>
 
                         <div className="flex items-center gap-2 pt-2">
-                          <Button size="sm" variant="outline" className="flex-1">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="flex-1"
+                          >
                             <Eye className="h-3 w-3 mr-1" />
                             View Details
                           </Button>
-                          <Button size="sm" variant="outline" className="flex-1">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="flex-1"
+                          >
                             <Camera className="h-3 w-3 mr-1" />
                             View Photos
                           </Button>
-                          <Button size="sm" variant="outline" className="flex-1">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="flex-1"
+                          >
                             <Download className="h-3 w-3 mr-1" />
                             Reports
                           </Button>
@@ -382,7 +413,11 @@ export default function ClientDashboard() {
                       transition={{ delay: 0.7 + index * 0.1, duration: 0.3 }}
                     >
                       <div className="flex items-start gap-3">
-                        <div className={`p-2 rounded-full ${getUpdateColor(update.type)}`}>
+                        <div
+                          className={`p-2 rounded-full ${getUpdateColor(
+                            update.type
+                          )}`}
+                        >
                           {getUpdateIcon(update.type)}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -399,7 +434,7 @@ export default function ClientDashboard() {
                       </div>
                     </motion.div>
                   ))}
-                  
+
                   <Button variant="outline" className="w-full mt-4" size="sm">
                     <MessageSquare className="h-4 w-4 mr-2" />
                     Contact Contractor
