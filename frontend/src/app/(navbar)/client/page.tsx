@@ -9,24 +9,25 @@ import { Button } from "@/components/ui/button";
 import {
   Building2,
   FileText,
-  Clock,
+  Calendar,
   Camera,
   TrendingUp,
-  Calendar,
   User,
   Bell,
   Search,
-  Plus,
-  MoreVertical,
   MapPin,
-  Users,
   Activity,
+  Eye,
+  Download,
+  MessageSquare,
+  Clock,
+  CheckCircle2,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { StatCard } from "@/components/dashboards/admin/stat-card";
 
-export default function Dashboard() {
+export default function ClientDashboard() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [greeting, setGreeting] = useState("");
 
@@ -42,28 +43,77 @@ export default function Dashboard() {
     else setGreeting("Good evening");
   }, [currentTime]);
 
-  const projects = [
+  const myProjects = [
     {
       id: 1,
       name: "Luxury Home Construction",
       address: "123 Oak Street, Springfield",
-      client: "Mike Wilson",
+      contractor: "BuildRight Construction",
       status: "active",
       progress: 65,
-      workers: 8,
+      startDate: "2024-01-15",
+      estimatedCompletion: "2024-08-15",
       lastUpdate: "2 hours ago",
+      milestone: "Foundation Complete",
     },
     {
       id: 2,
       name: "Office Building Renovation",
-      address: "456 Business Ave, Downtown",
-      client: "Wilson Properties",
+      address: "456 Business Ave, Downtown", 
+      contractor: "BuildRight Construction",
       status: "active",
       progress: 42,
-      workers: 12,
-      lastUpdate: "4 hours ago",
+      startDate: "2024-02-01",
+      estimatedCompletion: "2024-09-30",
+      lastUpdate: "1 day ago",
+      milestone: "Electrical Phase",
     },
   ];
+
+  const recentUpdates = [
+    { 
+      id: 1, 
+      type: "progress",
+      title: "Foundation work completed",
+      project: "Luxury Home Construction",
+      time: "2 hours ago",
+      description: "Concrete foundation has been poured and is curing properly."
+    },
+    { 
+      id: 2, 
+      type: "photo",
+      title: "Progress photos uploaded",
+      project: "Office Building Renovation", 
+      time: "4 hours ago",
+      description: "New photos showing electrical installation progress."
+    },
+    { 
+      id: 3, 
+      type: "report",
+      title: "Weekly progress report",
+      project: "Luxury Home Construction",
+      time: "1 day ago", 
+      description: "Weekly summary of completed work and upcoming tasks."
+    },
+  ];
+
+  const getUpdateIcon = (type: string) => {
+    switch (type) {
+      case "progress": return <TrendingUp className="h-4 w-4" />;
+      case "photo": return <Camera className="h-4 w-4" />;
+      case "report": return <FileText className="h-4 w-4" />;
+      default: return <Activity className="h-4 w-4" />;
+    }
+  };
+
+  const getUpdateColor = (type: string) => {
+    switch (type) {
+      case "progress": return "bg-green-50 text-green-700 border-green-200";
+      case "photo": return "bg-blue-50 text-blue-700 border-blue-200";  
+      case "report": return "bg-purple-50 text-purple-700 border-purple-200";
+      default: return "bg-gray-50 text-gray-700 border-gray-200";
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -81,7 +131,7 @@ export default function Dashboard() {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search projects, workers, or reports..."
+                placeholder="Search projects, reports, or photos..."
                 className="pl-10 w-64 lg:w-80 h-10 bg-background border-input"
               />
             </div>
@@ -102,8 +152,8 @@ export default function Dashboard() {
               <User className="h-4 w-4 text-primary-foreground" />
             </div>
             <div className="text-sm">
-              <div className="font-semibold text-foreground">Admin User</div>
-              <div className="text-muted-foreground text-xs">Administrator</div>
+              <div className="font-semibold text-foreground">Client User</div>
+              <div className="text-muted-foreground text-xs">Project Owner</div>
             </div>
           </div>
         </div>
@@ -125,7 +175,7 @@ export default function Dashboard() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1, duration: 0.4 }}
             >
-              {greeting}, Admin User!
+              {greeting}, Client!
             </motion.h1>
             <motion.p
               className="text-primary-foreground/90 text-base lg:text-lg mb-4"
@@ -133,7 +183,7 @@ export default function Dashboard() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.4 }}
             >
-              {"Here's your construction overview for today"}
+              Track your construction project progress and stay updated.
             </motion.p>
             <motion.div
               className="text-sm text-primary-foreground/80 font-medium"
@@ -143,7 +193,7 @@ export default function Dashboard() {
             >
               {currentTime.toLocaleDateString("en-US", {
                 weekday: "long",
-                year: "numeric",
+                year: "numeric", 
                 month: "long",
                 day: "numeric",
               })}
@@ -153,42 +203,42 @@ export default function Dashboard() {
           {/* Stats Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
             <StatCard
-              title="Active Sites"
+              title="Active Projects"
               value={2}
               icon={Building2}
               iconBgColor="bg-blue-600"
-              trend={{ value: 12, isPositive: true }}
+              trend={{ value: 0, isPositive: true }}
               delay={0}
             />
             <StatCard
-              title="Total Reports"
-              value={24}
-              icon={FileText}
+              title="Average Progress"
+              value={54}
+              icon={TrendingUp}
               iconBgColor="bg-green-600"
               trend={{ value: 8, isPositive: true }}
               delay={0.1}
             />
             <StatCard
-              title="Total Hours"
-              value={156}
-              icon={Clock}
-              iconBgColor="bg-orange-600"
-              trend={{ value: 5, isPositive: false }}
+              title="Recent Reports"
+              value={3}
+              icon={FileText}
+              iconBgColor="bg-purple-600"
+              trend={{ value: 1, isPositive: true }}
               delay={0.2}
             />
             <StatCard
-              title="Photos"
-              value={89}
+              title="New Photos"
+              value={24}
               icon={Camera}
-              iconBgColor="bg-purple-600"
-              trend={{ value: 15, isPositive: true }}
+              iconBgColor="bg-orange-600"
+              trend={{ value: 12, isPositive: true }}
               delay={0.3}
             />
           </div>
 
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8">
-            {/* Active Projects */}
+            {/* My Projects */}
             <motion.div
               className="xl:col-span-2"
               initial={{ opacity: 0, y: 20 }}
@@ -200,18 +250,14 @@ export default function Dashboard() {
                   <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-3 text-xl font-semibold text-foreground">
                       <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                        <TrendingUp className="h-4 w-4 text-primary-foreground" />
+                        <Building2 className="h-4 w-4 text-primary-foreground" />
                       </div>
-                      Active Projects
+                      My Projects
                     </CardTitle>
-                    <Button size="sm" className="h-9">
-                      <Plus className="h-4 w-4 mr-2" />
-                      New Project
-                    </Button>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {projects.map((project, index) => (
+                  {myProjects.map((project, index) => (
                     <motion.div
                       key={project.id}
                       className="border border-border rounded-lg p-4 bg-card hover:bg-accent/50 transition-colors duration-200"
@@ -230,9 +276,9 @@ export default function Dashboard() {
                             <span className="truncate">{project.address}</span>
                           </div>
                           <p className="text-sm text-muted-foreground">
-                            Client:{" "}
+                            Contractor:{" "}
                             <span className="font-medium text-foreground">
-                              {project.client}
+                              {project.contractor}
                             </span>
                           </p>
                         </div>
@@ -243,13 +289,6 @@ export default function Dashboard() {
                           >
                             {project.status}
                           </Badge>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0"
-                          >
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
                         </div>
                       </div>
 
@@ -274,17 +313,42 @@ export default function Dashboard() {
                           />
                         </div>
 
-                        <div className="flex items-center justify-between pt-2">
-                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                        <div className="grid grid-cols-2 gap-4 pt-2 text-sm">
+                          <div className="space-y-1">
                             <div className="flex items-center gap-1">
-                              <Users className="h-3 w-3" />
-                              <span>{project.workers} workers</span>
+                              <Calendar className="h-3 w-3" />
+                              <span>Started: {new Date(project.startDate).toLocaleDateString()}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Clock className="h-3 w-3" />
+                              <span>Est. Complete: {new Date(project.estimatedCompletion).toLocaleDateString()}</span>
+                            </div>
+                          </div>
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-1">
+                              <CheckCircle2 className="h-3 w-3" />
+                              <span>Current: {project.milestone}</span>
                             </div>
                             <div className="flex items-center gap-1">
                               <Activity className="h-3 w-3" />
-                              <span>Updated {project.lastUpdate}</span>
+                              <span>Updated: {project.lastUpdate}</span>
                             </div>
                           </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 pt-2">
+                          <Button size="sm" variant="outline" className="flex-1">
+                            <Eye className="h-3 w-3 mr-1" />
+                            View Details
+                          </Button>
+                          <Button size="sm" variant="outline" className="flex-1">
+                            <Camera className="h-3 w-3 mr-1" />
+                            View Photos
+                          </Button>
+                          <Button size="sm" variant="outline" className="flex-1">
+                            <Download className="h-3 w-3 mr-1" />
+                            Reports
+                          </Button>
                         </div>
                       </div>
                     </motion.div>
@@ -293,7 +357,7 @@ export default function Dashboard() {
               </Card>
             </motion.div>
 
-            {/* Recent Activity */}
+            {/* Recent Updates */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -303,68 +367,47 @@ export default function Dashboard() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3 text-xl font-semibold text-foreground">
                     <div className="h-8 w-8 rounded-lg bg-green-600 flex items-center justify-center">
-                      <Calendar className="h-4 w-4 text-white" />
+                      <Activity className="h-4 w-4 text-white" />
                     </div>
-                    Recent Activity
+                    Recent Updates
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="flex flex-col items-center justify-center py-12 text-center">
-                    <div className="h-16 w-16 rounded-lg bg-muted flex items-center justify-center mb-4">
-                      <Activity className="h-8 w-8 text-muted-foreground" />
-                    </div>
-                    <p className="text-muted-foreground font-medium mb-1">
-                      No recent activity
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      Activity will appear here as it happens
-                    </p>
-                  </div>
+                <CardContent className="space-y-4">
+                  {recentUpdates.map((update, index) => (
+                    <motion.div
+                      key={update.id}
+                      className="border border-border rounded-lg p-4 bg-muted/30 hover:bg-muted/50 transition-colors"
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.7 + index * 0.1, duration: 0.3 }}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className={`p-2 rounded-full ${getUpdateColor(update.type)}`}>
+                          {getUpdateIcon(update.type)}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-semibold text-sm text-foreground mb-1">
+                            {update.title}
+                          </h4>
+                          <p className="text-xs text-muted-foreground mb-1">
+                            {update.project} • {update.time}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {update.description}
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                  
+                  <Button variant="outline" className="w-full mt-4" size="sm">
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    Contact Contractor
+                  </Button>
                 </CardContent>
               </Card>
             </motion.div>
           </div>
-
-          {/* Today's Reports */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.4 }}
-          >
-            <Card className="border border-border shadow-sm bg-card">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-3 text-xl font-semibold text-foreground">
-                    <div className="h-8 w-8 rounded-lg bg-orange-600 flex items-center justify-center">
-                      <Calendar className="h-4 w-4 text-white" />
-                    </div>
-                    {"Today's Reports"}
-                  </CardTitle>
-                  <Button variant="outline" size="sm">
-                    View All Reports
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-col items-center justify-center py-16 text-center">
-                  <div className="h-20 w-20 rounded-lg bg-muted flex items-center justify-center mb-6">
-                    <FileText className="h-10 w-10 text-muted-foreground" />
-                  </div>
-                  <h3 className="text-lg font-semibold mb-2 text-foreground">
-                    No reports submitted today
-                  </h3>
-                  <p className="text-muted-foreground max-w-md mb-6">
-                    Reports from workers will appear here once they submit their
-                    daily updates
-                  </p>
-                  <Button size="lg">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Create Report
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
         </div>
       </div>
     </div>

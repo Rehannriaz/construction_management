@@ -32,22 +32,30 @@ export const useCurrentUser = () => {
 // Sign in mutation
 export const useSignIn = () => {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   return useMutation({
     mutationFn: (data: SignInRequest) => authService.signIn(data),
     onSuccess: (data) => {
-      // Update user data in cache
-      queryClient.setQueryData(queryKeys.auth.user(), data.user);
-      
-      // Show success message
-      toast.success('Welcome back! Redirecting to your dashboard...');
-      
-      // Redirect to appropriate dashboard
-      const dashboardRoute = getDefaultDashboard(data.user.role);
-      router.push(dashboardRoute);
+      try {
+        // Update user data in cache
+        queryClient.setQueryData(queryKeys.auth.user(), data.user);
+        
+        // Show success message
+        toast.success('Welcome back! Redirecting to your dashboard...');
+        
+        // Redirect to appropriate dashboard
+        const dashboardRoute = getDefaultDashboard(data.user.role);
+        
+        // Force redirect using window.location immediately
+        window.location.href = dashboardRoute;
+        
+      } catch (error) {
+        console.error('Error in onSuccess callback:', error);
+        toast.error('Redirect failed. Please refresh the page.');
+      }
     },
     onError: (error: unknown) => {
+      console.log('Sign in error:', error);
       const message = (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'message' in error.response && typeof error.response.message === 'string') 
         ? error.response.message 
         : (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string') 

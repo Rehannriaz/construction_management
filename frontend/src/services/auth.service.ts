@@ -1,4 +1,5 @@
 import { BaseApiService } from './base-api.service';
+import { tokenUtils } from '@/utils/token';
 
 export interface User {
   userId: string;
@@ -159,8 +160,7 @@ class AuthService extends BaseApiService {
    * Check if user is authenticated
    */
   isAuthenticated(): boolean {
-    if (typeof window === 'undefined') return false;
-    return !!localStorage.getItem('accessToken');
+    return tokenUtils.hasToken() && !tokenUtils.isTokenExpired();
   }
 
   /**

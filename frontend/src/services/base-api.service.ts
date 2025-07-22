@@ -1,3 +1,5 @@
+import { tokenUtils } from '@/utils/token';
+
 // Base API service with improved error handling and token management
 export interface ApiResponse<T = unknown> {
   success: boolean;
@@ -30,18 +32,15 @@ class BaseApiService {
   }
 
   private getAccessToken(): string | null {
-    if (typeof window === "undefined") return null;
-    return localStorage.getItem("accessToken");
+    return tokenUtils.getToken();
   }
 
   protected setAccessToken(token: string): void {
-    if (typeof window === "undefined") return;
-    localStorage.setItem("accessToken", token);
+    tokenUtils.setToken(token);
   }
 
   protected clearTokens(): void {
-    if (typeof window === "undefined") return;
-    localStorage.removeItem("accessToken");
+    tokenUtils.clearToken();
   }
 
   private async refreshAccessToken(): Promise<string> {

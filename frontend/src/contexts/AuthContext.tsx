@@ -101,7 +101,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(response.data.user);
         
         // Redirect to admin dashboard (signup creates admin user)
-        router.push('/admin/dashboard');
+        router.push('/admin');
         
         return { success: true };
       } else {
@@ -143,13 +143,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const getDashboardRoute = (role: User['role']): string => {
     switch (role) {
       case 'admin':
-        return '/admin/dashboard';
+        return '/admin';
       case 'site_manager':
-        return '/site-manager/dashboard';
+        return '/site-manager';
       case 'worker':
-        return '/worker/dashboard';
+        return '/worker';
       case 'client':
-        return '/client/dashboard';
+        return '/client';
       default:
         return '/login';
     }

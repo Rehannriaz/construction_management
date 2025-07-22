@@ -15,19 +15,31 @@ export function AnimatedCounter({
   className,
 }: AnimatedCounterProps) {
   const [displayValue, setDisplayValue] = useState(0);
+  const [mounted, setMounted] = useState(false);
   const spring = useSpring(0, { duration });
   const display = useTransform(spring, (current) => Math.round(current));
 
   useEffect(() => {
-    spring.set(value);
-  }, [spring, value]);
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
+    if (!mounted) return;
+    spring.set(value);
+  }, [spring, value, mounted]);
+
+  useEffect(() => {
+    if (!mounted) return;
     const unsubscribe = display.on("change", (latest) => {
       setDisplayValue(latest);
     });
     return unsubscribe;
-  }, [display]);
+  }, [display, mounted]);
+
+  // Show the final value immediately on server/first render to prevent mismatch
+  if (!mounted) {
+    return <span className={className}>{value}</span>;
+  }
 
   return (
     <motion.span

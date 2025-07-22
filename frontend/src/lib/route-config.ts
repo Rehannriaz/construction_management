@@ -27,14 +27,10 @@ export const routePermissions: RoutePermission[] = [
     requireAuth: false,
   },
 
+
   // Admin routes - Full system access
   {
     path: '/admin',
-    allowedRoles: ['admin'],
-    requireAuth: true,
-  },
-  {
-    path: '/admin/dashboard',
     allowedRoles: ['admin'],
     requireAuth: true,
   },
@@ -72,11 +68,6 @@ export const routePermissions: RoutePermission[] = [
   // Site Manager routes - Site management access
   {
     path: '/site-manager',
-    allowedRoles: ['admin', 'site_manager'],
-    requireAuth: true,
-  },
-  {
-    path: '/site-manager/dashboard',
     allowedRoles: ['admin', 'site_manager'],
     requireAuth: true,
   },
@@ -123,11 +114,6 @@ export const routePermissions: RoutePermission[] = [
     requireAuth: true,
   },
   {
-    path: '/worker/dashboard',
-    allowedRoles: ['admin', 'site_manager', 'worker'],
-    requireAuth: true,
-  },
-  {
     path: '/worker/daily-reports',
     allowedRoles: ['admin', 'site_manager', 'worker'],
     requireAuth: true,
@@ -156,11 +142,6 @@ export const routePermissions: RoutePermission[] = [
   // Client routes - View-only access
   {
     path: '/client',
-    allowedRoles: ['admin', 'client'],
-    requireAuth: true,
-  },
-  {
-    path: '/client/dashboard',
     allowedRoles: ['admin', 'client'],
     requireAuth: true,
   },
@@ -211,10 +192,10 @@ export const routePermissions: RoutePermission[] = [
 // Helper function to get default dashboard for each role
 export const getDefaultDashboard = (role: User['role']): string => {
   const dashboards: Record<User['role'], string> = {
-    admin: '/admin/dashboard',
-    site_manager: '/site-manager/dashboard',
-    worker: '/worker/dashboard',
-    client: '/client/dashboard',
+    admin: '/admin',
+    site_manager: '/site-manager', 
+    worker: '/worker',
+    client: '/client',
   };
   return dashboards[role];
 };

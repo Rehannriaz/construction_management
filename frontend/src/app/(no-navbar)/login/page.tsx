@@ -2,11 +2,13 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Building2, Eye, EyeOff, Mail, Lock, ArrowRight, AlertCircle } from "lucide-react";
 import { useAuth } from "@/hooks/api/use-auth";
+import { getDefaultDashboard } from "@/lib/route-config";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,10 +29,32 @@ export default function LoginPage() {
     password: ""
   });
   const [errors, setErrors] = useState<string>("");
+  const router = useRouter();
 
-  const { signIn, isSigningIn } = useAuth();
+  const authHook = useAuth();
+  const { user, isAuthenticated, signIn, isSigningIn, signInError } = authHook;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      console.log('User already authenticated, redirecting to dashboard');
+      const dashboardRoute = getDefaultDashboard(user.role);
+      router.replace(dashboardRoute);
+    }
+  }, [isAuthenticated, user, router]);
+
+  // Show sign-in error if any
+  useEffect(() => {
+    if (signInError) {
+      console.log('Sign in error:', signInError);
+      const message = (signInError && typeof signInError === 'object' && 'message' in signInError && typeof signInError.message === 'string') 
+        ? signInError.message 
+        : 'Sign in failed';
+      setErrors(message);
+    }
+  }, [signInError]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors("");
 
