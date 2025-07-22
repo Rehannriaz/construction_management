@@ -1,4 +1,4 @@
-import { BaseApiService, ApiResponse } from './base-api.service';
+import { BaseApiService } from './base-api.service';
 
 export interface User {
   userId: string;

@@ -1,12 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { useVerifyOTP, useResendOTP } from "@/hooks/api/use-auth";
 import {
-  Building2,
-  Mail,
   ArrowRight,
   Check,
   AlertCircle,
@@ -27,19 +25,19 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
-export default function VerifyOTPPage() {
+function VerifyOTPContent() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [timer, setTimer] = useState(60);
   const [canResend, setCanResend] = useState(false);
-  
+
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   const email = searchParams.get("email") || "";
-  
+
   // Hooks
   const verifyOTPMutation = useVerifyOTP();
   const resendOTPMutation = useResendOTP();
@@ -97,14 +95,14 @@ export default function VerifyOTPPage() {
     const newOtp = pastedData.split("");
     setOtp(newOtp);
     setError("");
-    
+
     // Auto-submit
     handleVerify(pastedData);
   };
 
   const handleVerify = async (otpCode?: string) => {
     const otpToVerify = otpCode || otp.join("");
-    
+
     if (otpToVerify.length !== 6) {
       setError("Please enter all 6 digits");
       return;
@@ -121,17 +119,18 @@ export default function VerifyOTPPage() {
         onSuccess: () => {
           setSuccess("Email verified successfully! Redirecting...");
         },
-        onError: (error: any) => {
-          if (error?.response?.message) {
-            setError(error.response.message);
-          } else if (error?.message) {
-            setError(error.message);
+        onError: (error: unknown) => {
+          const err = error as { response?: { message?: string }; message?: string };
+          if (err?.response?.message) {
+            setError(err.response.message);
+          } else if (err?.message) {
+            setError(err.message);
           } else {
             setError("Verification failed. Please try again.");
           }
           setOtp(["", "", "", "", "", ""]);
           inputRefs.current[0]?.focus();
-        }
+        },
       }
     );
   };
@@ -148,19 +147,20 @@ export default function VerifyOTPPage() {
           setCanResend(false);
           setOtp(["", "", "", "", "", ""]);
           inputRefs.current[0]?.focus();
-          
+
           // Clear success message after 3 seconds
           setTimeout(() => setSuccess(""), 3000);
         },
-        onError: (error: any) => {
-          if (error?.response?.message) {
-            setError(error.response.message);
-          } else if (error?.message) {
-            setError(error.message);
+        onError: (error: unknown) => {
+          const err = error as { response?: { message?: string }; message?: string };
+          if (err?.response?.message) {
+            setError(err.response.message);
+          } else if (err?.message) {
+            setError(err.message);
           } else {
             setError("Failed to resend code. Please try again.");
           }
-        }
+        },
       }
     );
   };
@@ -202,7 +202,7 @@ export default function VerifyOTPPage() {
                   Verify Your Email
                 </CardTitle>
                 <CardDescription className="mt-2">
-                  We've sent a 6-digit code to
+                  We&apos;ve sent a 6-digit code to
                   <br />
                   <span className="font-medium text-foreground">{email}</span>
                 </CardDescription>
@@ -242,14 +242,16 @@ export default function VerifyOTPPage() {
                   <Label className="text-center block">
                     Enter Verification Code
                   </Label>
-                  <div 
+                  <div
                     className="flex justify-center space-x-2"
                     onPaste={handlePaste}
                   >
                     {otp.map((digit, index) => (
                       <Input
                         key={index}
-                        ref={(el) => (inputRefs.current[index] = el)}
+                        ref={(el: HTMLInputElement | null) => {
+                          inputRefs.current[index] = el;
+                        }}
                         type="text"
                         inputMode="numeric"
                         maxLength={1}
@@ -266,7 +268,9 @@ export default function VerifyOTPPage() {
                 <Button
                   onClick={() => handleVerify()}
                   className="w-full h-12 text-base font-medium"
-                  disabled={verifyOTPMutation.isPending || otp.some((digit) => !digit)}
+                  disabled={
+                    verifyOTPMutation.isPending || otp.some((digit) => !digit)
+                  }
                 >
                   {verifyOTPMutation.isPending ? (
                     <motion.div
@@ -288,9 +292,9 @@ export default function VerifyOTPPage() {
 
                 <div className="text-center space-y-3">
                   <p className="text-sm text-muted-foreground">
-                    Didn't receive the code?
+                    Didn&apos;t receive the code?
                   </p>
-                  
+
                   {canResend ? (
                     <Button
                       variant="outline"
@@ -352,5 +356,21 @@ export default function VerifyOTPPage() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+export default function VerifyOTPPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-background via-accent/20 to-secondary/30 flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="animate-pulse">
+            <div className="h-96 bg-card/80 rounded-lg"></div>
+          </div>
+        </div>
+      </div>
+    }>
+      <VerifyOTPContent />
+    </Suspense>
   );
 }
