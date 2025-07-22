@@ -74,6 +74,60 @@ export class AuthController {
 
       const result = await this.authService.signUp(signUpData, ipAddress, userAgent);
 
+      res.status(201).json({
+        success: true,
+        message: result.message,
+        data: {
+          email: result.email,
+          requiresOTP: result.requiresOTP
+        }
+      });
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        message: error instanceof Error ? error.message : 'Registration failed'
+      });
+    }
+  };
+
+  /**
+   * @swagger
+   * /auth/verify-otp:
+   *   post:
+   *     tags: [Authentication]
+   *     summary: Verify OTP and complete signup
+   *     description: Verifies the OTP code and activates the user account
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - email
+   *               - otpCode
+   *             properties:
+   *               email:
+   *                 type: string
+   *                 format: email
+   *                 example: admin@example.com
+   *               otpCode:
+   *                 type: string
+   *                 example: "123456"
+   *     responses:
+   *       200:
+   *         description: OTP verified successfully, user activated
+   *       400:
+   *         description: Invalid or expired OTP
+   */
+  verifyOTP = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { email, otpCode } = req.body;
+      const ipAddress = req.ip;
+      const userAgent = req.get('User-Agent');
+
+      const result = await this.authService.verifyOTPAndCompleteSignup(email, otpCode, ipAddress, userAgent);
+
       // Set refresh token as HTTP-only cookie
       res.cookie('refreshToken', result.tokens.refreshToken, {
         httpOnly: true,
@@ -82,9 +136,9 @@ export class AuthController {
         maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
       });
 
-      res.status(201).json({
+      res.json({
         success: true,
-        message: 'Company and admin user created successfully',
+        message: 'Account verified successfully',
         data: {
           user: result.user,
           accessToken: result.tokens.accessToken
@@ -93,7 +147,51 @@ export class AuthController {
     } catch (error) {
       res.status(400).json({
         success: false,
-        message: error instanceof Error ? error.message : 'Registration failed'
+        message: error instanceof Error ? error.message : 'OTP verification failed'
+      });
+    }
+  };
+
+  /**
+   * @swagger
+   * /auth/resend-otp:
+   *   post:
+   *     tags: [Authentication]
+   *     summary: Resend OTP
+   *     description: Resends the OTP code to the user's email
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - email
+   *             properties:
+   *               email:
+   *                 type: string
+   *                 format: email
+   *                 example: admin@example.com
+   *     responses:
+   *       200:
+   *         description: OTP resent successfully
+   *       400:
+   *         description: Invalid email or user already verified
+   */
+  resendOTP = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { email } = req.body;
+
+      const result = await this.authService.resendVerificationOTP(email);
+
+      res.json({
+        success: true,
+        message: result.message
+      });
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        message: error instanceof Error ? error.message : 'Failed to resend OTP'
       });
     }
   };
@@ -427,6 +525,119 @@ export class AuthController {
       res.status(statusCode).json({
         success: false,
         message: error instanceof Error ? error.message : 'User creation failed'
+      });
+    }
+  };
+
+  /**
+   * @swagger
+   * /auth/forgot-password:
+   *   post:
+   *     tags: [Authentication]
+   *     summary: Request password reset
+   *     description: Sends a password reset OTP to the user's email
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - email
+   *             properties:
+   *               email:
+   *                 type: string
+   *                 format: email
+   *                 example: admin@example.com
+   *     responses:
+   *       200:
+   *         description: Password reset code sent (if email exists)
+   *       400:
+   *         description: Invalid email format
+   */
+  requestPasswordReset = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { email } = req.body;
+
+      if (!email || typeof email !== 'string') {
+        res.status(400).json({
+          success: false,
+          message: 'Email is required'
+        });
+        return;
+      }
+
+      const result = await this.authService.requestPasswordReset(email);
+
+      res.json({
+        success: true,
+        message: result.message
+      });
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        message: error instanceof Error ? error.message : 'Failed to request password reset'
+      });
+    }
+  };
+
+  /**
+   * @swagger
+   * /auth/reset-password:
+   *   post:
+   *     tags: [Authentication]
+   *     summary: Reset password with OTP
+   *     description: Resets the user's password using OTP verification
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - email
+   *               - otpCode
+   *               - newPassword
+   *             properties:
+   *               email:
+   *                 type: string
+   *                 format: email
+   *                 example: admin@example.com
+   *               otpCode:
+   *                 type: string
+   *                 example: "123456"
+   *               newPassword:
+   *                 type: string
+   *                 minLength: 8
+   *                 example: NewPassword123!
+   *     responses:
+   *       200:
+   *         description: Password reset successful
+   *       400:
+   *         description: Invalid or expired OTP, or password validation failed
+   */
+  resetPassword = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { email, otpCode, newPassword } = req.body;
+
+      if (!email || !otpCode || !newPassword) {
+        res.status(400).json({
+          success: false,
+          message: 'Email, OTP code, and new password are required'
+        });
+        return;
+      }
+
+      const result = await this.authService.resetPassword(email, otpCode, newPassword);
+
+      res.json({
+        success: true,
+        message: result.message
+      });
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        message: error instanceof Error ? error.message : 'Password reset failed'
       });
     }
   };

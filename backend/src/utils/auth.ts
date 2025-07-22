@@ -1,5 +1,6 @@
 import jwt, { SignOptions } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 import { UserRole } from '../types/enums';
 
 export interface JWTPayload {
@@ -109,5 +110,10 @@ export class AuthUtils {
   static validateEmail(email: string): boolean {
     const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
     return emailRegex.test(email);
+  }
+
+  // Hash refresh token for secure storage
+  static hashRefreshToken(token: string): string {
+    return crypto.createHash('sha256').update(token).digest('hex');
   }
 }

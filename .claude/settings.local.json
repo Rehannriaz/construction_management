@@ -16,7 +16,16 @@
       "Bash(npm uninstall:*)",
       "Bash(npm run build:*)",
       "Bash(find:*)",
-      "Bash(npm run lint)"
+      "Bash(npm run lint)",
+      "Bash(npm run build:*)",
+      "Bash(npm install:*)",
+      "Bash(grep:*)",
+      "Bash(mkdir:*)",
+      "Bash(mv:*)",
+      "Bash(timeout 10s npm run dev)",
+      "Bash(true)",
+      "Bash(PGPASSWORD=uIxEbppiuALldkVBRABmuUBFJvgOBxOI psql -h nozomi.proxy.rlwy.net -U postgres -p 55146 -d railway -c \"\\dt auth.*\")",
+      "Bash(timeout 10 npm run dev)"
     ],
     "deny": []
   }

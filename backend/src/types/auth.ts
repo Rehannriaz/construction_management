@@ -8,6 +8,7 @@ export interface SignUpRequest {
   companyName: string;
   companyEmail: string;
   companyPhone?: string;
+  companyAbn?: string;
   phone?: string;
 }
 

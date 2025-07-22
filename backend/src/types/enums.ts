@@ -89,3 +89,92 @@ export enum EntityType {
   MESSAGE = 'message',
   INDUCTION = 'induction'
 }
+
+export enum ToolType {
+  HAND_TOOL = 'hand_tool',
+  POWER_TOOL = 'power_tool',
+  HEAVY_MACHINERY = 'heavy_machinery',
+  VEHICLE = 'vehicle',
+  SAFETY_EQUIPMENT = 'safety_equipment'
+}
+
+export enum ConditionRating {
+  EXCELLENT = 'excellent',
+  GOOD = 'good',
+  FAIR = 'fair',
+  POOR = 'poor',
+  OUT_OF_SERVICE = 'out_of_service'
+}
+
+export enum DeliveryRequestType {
+  PICKUP = 'pickup',
+  DELIVERY = 'delivery',
+  VEHICLE_REQUEST = 'vehicle_request'
+}
+
+export enum VehicleType {
+  TIP_TRUCK = 'tip_truck',
+  EXCAVATOR = 'excavator',
+  CRANE = 'crane',
+  FLATBED = 'flatbed',
+  OTHER = 'other'
+}
+
+export enum DeliveryStatus {
+  PENDING = 'pending',
+  APPROVED = 'approved',
+  SCHEDULED = 'scheduled',
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled'
+}
+
+export enum DocumentType {
+  CONSTRUCTION_PLAN = 'construction_plan',
+  WHS_PLAN = 'whs_plan',
+  SUBCONTRACTOR_AGREEMENT = 'subcontractor_agreement',
+  PERMIT = 'permit',
+  INDUCTION_MATERIAL = 'induction_material',
+  OTHER = 'other'
+}
+
+export enum SafetyRating {
+  EXCELLENT = 'excellent',
+  GOOD = 'good',
+  FAIR = 'fair',
+  POOR = 'poor'
+}
+
+export enum MilestoneType {
+  FOUNDATION = 'foundation',
+  FRAMING = 'framing',
+  ROOFING = 'roofing',
+  ELECTRICAL = 'electrical',
+  PLUMBING = 'plumbing',
+  FINISHING = 'finishing',
+  HANDOVER = 'handover'
+}
+
+export enum InductionType {
+  SAFETY_INDUCTION = 'safety_induction',
+  SITE_SPECIFIC = 'site_specific',
+  EQUIPMENT_TRAINING = 'equipment_training',
+  WHS_TRAINING = 'whs_training',
+  EMERGENCY_PROCEDURES = 'emergency_procedures'
+}
+
+export enum InductionStatus {
+  NOT_STARTED = 'not_started',
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
+  EXPIRED = 'expired'
+}
+
+export enum WeatherDelayReason {
+  RAIN = 'rain',
+  EXTREME_HEAT = 'extreme_heat',
+  WIND = 'wind',
+  STORM = 'storm',
+  FLOODING = 'flooding',
+  OTHER = 'other'
+}

@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { AuthController } from '../controllers/AuthController';
 import { AuthMiddleware } from '../middleware/auth';
 import { validationMiddleware } from '../middleware/validation';
-import { signUpValidation, signInValidation, createUserValidation } from '../middleware/validations/authValidations';
+import { signUpValidation, signInValidation, createUserValidation, verifyOTPValidation, resendOTPValidation } from '../middleware/validations/authValidations';
 
 const router = Router();
 const authController = new AuthController();
@@ -11,6 +11,10 @@ const authController = new AuthController();
 router.post('/signup', signUpValidation, validationMiddleware, authController.signUp);
 router.post('/signin', signInValidation, validationMiddleware, authController.signIn);
 router.post('/refresh', authController.refreshToken);
+router.post('/verify-otp', verifyOTPValidation, validationMiddleware, authController.verifyOTP);
+router.post('/resend-otp', resendOTPValidation, validationMiddleware, authController.resendOTP);
+router.post('/forgot-password', authController.requestPasswordReset);
+router.post('/reset-password', authController.resetPassword);
 
 // Protected routes
 router.post('/signout', AuthMiddleware.optionalAuth, authController.signOut);

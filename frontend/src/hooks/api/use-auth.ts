@@ -5,7 +5,9 @@ import {
   authService, 
   type SignInRequest, 
   type SignUpRequest, 
-  type CreateUserRequest
+  type CreateUserRequest,
+  type VerifyOTPRequest,
+  type ResendOTPRequest
 } from '@/services/auth.service';
 import { queryKeys } from '@/lib/query-client';
 import { getDefaultDashboard } from '@/lib/route-config';
@@ -58,20 +60,16 @@ export const useSignIn = () => {
 
 // Sign up mutation
 export const useSignUp = () => {
-  const queryClient = useQueryClient();
   const router = useRouter();
 
   return useMutation({
     mutationFn: (data: SignUpRequest) => authService.signUp(data),
     onSuccess: (data) => {
-      // Update user data in cache
-      queryClient.setQueryData(queryKeys.auth.user(), data.user);
-      
       // Show success message
-      toast.success('Account created successfully! Welcome to Site Tasker.');
+      toast.success(data.message);
       
-      // Redirect to admin dashboard (signup creates admin user)
-      router.push('/admin/dashboard');
+      // Redirect to OTP verification page
+      router.push(`/verify-otp?email=${encodeURIComponent(data.email)}`);
     },
     onError: (error: unknown) => {
       // Handle ApiError - check for both validation errors and general messages
@@ -96,6 +94,49 @@ export const useSignUp = () => {
       const message = (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string') 
         ? error.message 
         : 'Registration failed';
+      toast.error(message);
+    },
+  });
+};
+
+// Verify OTP mutation
+export const useVerifyOTP = () => {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: (data: VerifyOTPRequest) => authService.verifyOTP(data),
+    onSuccess: (data) => {
+      // Update user data in cache
+      queryClient.setQueryData(queryKeys.auth.user(), data.user);
+      
+      // Show success message
+      toast.success('Account verified successfully! Welcome to Site Tasker.');
+      
+      // Redirect to appropriate dashboard
+      const dashboardRoute = getDefaultDashboard(data.user.role);
+      router.push(dashboardRoute);
+    },
+    onError: (error: unknown) => {
+      const message = (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string') 
+        ? error.message 
+        : 'OTP verification failed';
+      toast.error(message);
+    },
+  });
+};
+
+// Resend OTP mutation
+export const useResendOTP = () => {
+  return useMutation({
+    mutationFn: (data: ResendOTPRequest) => authService.resendOTP(data),
+    onSuccess: (data) => {
+      toast.success(data.message);
+    },
+    onError: (error: unknown) => {
+      const message = (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string') 
+        ? error.message 
+        : 'Failed to resend OTP';
       toast.error(message);
     },
   });
@@ -242,6 +283,46 @@ export const useAuth = () => {
       return null;
     },
   };
+};
+
+// Request password reset mutation
+export const useRequestPasswordReset = () => {
+  return useMutation({
+    mutationFn: (email: string) => authService.requestPasswordReset(email),
+    onSuccess: (data) => {
+      toast.success(data.message);
+    },
+    onError: (error: unknown) => {
+      const message = (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'message' in error.response && typeof error.response.message === 'string') 
+        ? error.response.message 
+        : (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string') 
+          ? error.message 
+          : 'Failed to request password reset';
+      toast.error(message);
+    },
+  });
+};
+
+// Reset password mutation
+export const useResetPassword = () => {
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: ({ email, otpCode, newPassword }: { email: string; otpCode: string; newPassword: string }) => 
+      authService.resetPassword(email, otpCode, newPassword),
+    onSuccess: (data) => {
+      toast.success(data.message);
+      router.push('/login');
+    },
+    onError: (error: unknown) => {
+      const message = (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'message' in error.response && typeof error.response.message === 'string') 
+        ? error.response.message 
+        : (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string') 
+          ? error.message 
+          : 'Failed to reset password';
+      toast.error(message);
+    },
+  });
 };
 
 // Hook to check user permissions

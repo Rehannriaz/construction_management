@@ -24,12 +24,28 @@ export interface SignUpRequest {
   companyName: string;
   companyEmail: string;
   companyPhone?: string;
+  companyAbn?: string;
   phone?: string;
 }
 
 export interface AuthResponse {
   user: User;
   accessToken: string;
+}
+
+export interface SignUpResponse {
+  message: string;
+  email: string;
+  requiresOTP: boolean;
+}
+
+export interface VerifyOTPRequest {
+  email: string;
+  otpCode: string;
+}
+
+export interface ResendOTPRequest {
+  email: string;
 }
 
 export interface CreateUserRequest {
@@ -46,14 +62,30 @@ class AuthService extends BaseApiService {
   /**
    * Sign up a new company with admin user
    */
-  async signUp(data: SignUpRequest): Promise<AuthResponse> {
-    const response = await this.post<AuthResponse>('/auth/signup', data);
+  async signUp(data: SignUpRequest): Promise<SignUpResponse> {
+    const response = await this.post<SignUpResponse>('/auth/signup', data);
+    return response;
+  }
+
+  /**
+   * Verify OTP and complete signup
+   */
+  async verifyOTP(data: VerifyOTPRequest): Promise<AuthResponse> {
+    const response = await this.post<AuthResponse>('/auth/verify-otp', data);
     
     // Store access token
     if (response.accessToken) {
       this.setAccessToken(response.accessToken);
     }
     
+    return response;
+  }
+
+  /**
+   * Resend OTP
+   */
+  async resendOTP(data: ResendOTPRequest): Promise<{ message: string }> {
+    const response = await this.post<{ message: string }>('/auth/resend-otp', data);
     return response;
   }
 
@@ -129,6 +161,26 @@ class AuthService extends BaseApiService {
   isAuthenticated(): boolean {
     if (typeof window === 'undefined') return false;
     return !!localStorage.getItem('accessToken');
+  }
+
+  /**
+   * Request password reset
+   */
+  async requestPasswordReset(email: string): Promise<{ message: string }> {
+    const response = await this.post<{ message: string }>('/auth/forgot-password', { email });
+    return response;
+  }
+
+  /**
+   * Reset password with OTP
+   */
+  async resetPassword(email: string, otpCode: string, newPassword: string): Promise<{ message: string }> {
+    const response = await this.post<{ message: string }>('/auth/reset-password', {
+      email,
+      otpCode,
+      newPassword
+    });
+    return response;
   }
 
 }

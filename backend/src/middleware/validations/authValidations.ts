@@ -104,3 +104,22 @@ export const createUserValidation = [
     .withMessage('Employee ID must be less than 50 characters')
     .trim()
 ];
+
+export const verifyOTPValidation = [
+  body('email')
+    .isEmail()
+    .normalizeEmail()
+    .withMessage('Please provide a valid email address'),
+    
+  body('otpCode')
+    .isLength({ min: 6, max: 6 })
+    .isNumeric()
+    .withMessage('OTP code must be 6 digits')
+];
+
+export const resendOTPValidation = [
+  body('email')
+    .isEmail()
+    .normalizeEmail()
+    .withMessage('Please provide a valid email address')
+];
