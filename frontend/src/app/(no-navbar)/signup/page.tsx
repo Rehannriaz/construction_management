@@ -78,13 +78,8 @@ export default function SignupPage() {
     {}
   );
 
-  const {
-    user,
-    isAuthenticated,
-    signUp,
-    isSigningUp,
-    getSignUpErrorMessage,
-  } = useAuth();
+  const { user, isAuthenticated, signUp, isSigningUp, getSignUpErrorMessage } =
+    useAuth();
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -97,12 +92,7 @@ export default function SignupPage() {
 
   const validateStep = (step: number): boolean => {
     const stepValidations = {
-      1:
-        formData.firstName &&
-        formData.lastName &&
-        formData.email &&
-        formData.phone &&
-        formData.dateOfBirth,
+      1: formData.firstName && formData.lastName && formData.email,
       2:
         formData.companyName &&
         formData.companyEmail &&
@@ -112,10 +102,7 @@ export default function SignupPage() {
         formData.companyState &&
         formData.companyPostalCode,
       3: true, // All fields in step 3 are optional (employeeId, licenseNumber)
-      4:
-        formData.emergencyContactName &&
-        formData.emergencyContactPhone &&
-        formData.emergencyContactRelation,
+      4: true, // All emergency contact fields are now optional
       5:
         formData.password &&
         formData.confirmPassword &&
@@ -201,7 +188,6 @@ export default function SignupPage() {
     }
   };
 
-
   const features = [
     "Project timeline tracking",
     "Team collaboration tools",
@@ -274,7 +260,7 @@ export default function SignupPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number *</Label>
+              <Label htmlFor="phone">Phone Number (Optional)</Label>
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -285,13 +271,12 @@ export default function SignupPage() {
                   className="pl-10 h-12"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  required
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="dateOfBirth">Date of Birth *</Label>
+              <Label htmlFor="dateOfBirth">Date of Birth (Optional)</Label>
               <div className="relative">
                 <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -301,9 +286,13 @@ export default function SignupPage() {
                   className="pl-10 h-12"
                   value={formData.dateOfBirth}
                   onChange={handleInputChange}
-                  required
                 />
               </div>
+            </div>
+
+            <div className="text-center text-sm text-muted-foreground">
+              Only name and email are required. Phone number and date of birth
+              can be added later.
             </div>
           </div>
         );
@@ -477,7 +466,7 @@ export default function SignupPage() {
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="emergencyContactName">
-                Emergency Contact Name *
+                Emergency Contact Name (Optional)
               </Label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -489,14 +478,13 @@ export default function SignupPage() {
                   className="pl-10 h-12"
                   value={formData.emergencyContactName}
                   onChange={handleInputChange}
-                  required
                 />
               </div>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="emergencyContactPhone">
-                Emergency Contact Phone *
+                Emergency Contact Phone (Optional)
               </Label>
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -508,13 +496,14 @@ export default function SignupPage() {
                   className="pl-10 h-12"
                   value={formData.emergencyContactPhone}
                   onChange={handleInputChange}
-                  required
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="emergencyContactRelation">Relationship *</Label>
+              <Label htmlFor="emergencyContactRelation">
+                Relationship (Optional)
+              </Label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -525,9 +514,13 @@ export default function SignupPage() {
                   className="pl-10 h-12"
                   value={formData.emergencyContactRelation}
                   onChange={handleInputChange}
-                  required
                 />
               </div>
+            </div>
+
+            <div className="text-center text-sm text-muted-foreground">
+              All emergency contact fields are optional - you can provide this
+              information later in your profile settings.
             </div>
           </div>
         );
@@ -728,7 +721,7 @@ export default function SignupPage() {
               </motion.div>
 
               {/* Progress Steps */}
-              <div className="flex justify-between items-center mt-6">
+              <div className="flex justify-center items-center mt-6">
                 {[1, 2, 3, 4, 5].map((step) => (
                   <div key={step} className="flex items-center">
                     <div
