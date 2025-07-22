@@ -29,13 +29,15 @@ export class OTPService {
    * Generate a random 6-digit OTP code
    */
   private generateOTPCode(): string {
-    // For development, use static OTP from environment
+    // Only use static OTP when emails are disabled (SEND_EMAILS=false)
+    const sendEmails = process.env.SEND_EMAILS === 'true';
     const staticOTP = process.env.STATIC_OTP;
-    if (staticOTP) {
+    
+    if (!sendEmails && staticOTP) {
       return staticOTP;
     }
     
-    // Generate random 6-digit code
+    // Generate random 6-digit code for production or when emails are enabled
     return Math.floor(100000 + Math.random() * 900000).toString();
   }
 
